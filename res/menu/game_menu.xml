@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item
+        android:id="@+id/gravity"
+        android:title="@string/gravity_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/antigravity"
+        android:title="@string/antigravity_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    
+    
+    <item
+        android:id="@+id/density"
+        android:title="@string/density_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/evap"
+        android:title="@string/evap_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/paint"
+        android:title="@string/paint_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/wtf"
+        android:title="@string/wtf_string"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+</menu>

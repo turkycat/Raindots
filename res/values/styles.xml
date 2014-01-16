@@ -1,0 +1,35 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" id="@+id/theme" parent="@android:style/Theme.Black">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    
+    
+    <color name="blacknot">#2c2c2c</color>
+    <color name="pressed_color">#ffffff</color>
+    <color name="steelblue">#0080c0</color>
+    <color name="green">#18E900</color>
+    <color name="blue">#0559D8</color>
+    <color name="purple">#660066</color>
+    <color name="metal">#6B6B6B</color>
+    <color name="gum">#FF406B</color>
+    <color name="orange">#FF9811</color>
+    
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    
+    
+
+</resources>
