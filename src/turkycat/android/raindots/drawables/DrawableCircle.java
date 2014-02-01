@@ -112,8 +112,13 @@ public class DrawableCircle
 	public void draw( Canvas canvas )
 	{
 		Paint paint = new Paint();
+		
+		paint.setColor( Color.WHITE );
+		canvas.drawCircle( x, y, radius + 2f, paint );
+		
 		paint.setColor( color );
 		canvas.drawCircle( x, y, radius, paint );
+		Log.i( TAG, "circle drawn" );
 	}
 	
 	
@@ -151,13 +156,14 @@ public class DrawableCircle
 
 			break;
 			
+			//antigravity can move things up or down
 		case ANTIGRAVITY:
 			if( isOutOfBounds() ) enabled = false;
 			else
 			{
 				speed -= ( rnd.nextFloat() - 0.5f ) * 2;
 				y += speed;
-				radius += ( rnd.nextFloat() - 0.5f ) * 2;
+				radius += ( rnd.nextFloat() - 0.5f ) * 5;
 				x += rnd.nextInt(2) == 0 ? -1 : 1;
 			}
 			
@@ -170,11 +176,11 @@ public class DrawableCircle
 			
 			break;
 			
-		case WTF:
+		case SEIZURE:
 			color = Color.rgb( rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256) );
 			this.radius = rnd.nextFloat() * 200.0f;
 			
-			switch( rnd.nextInt( 4 ) )
+			switch( rnd.nextInt( 5 ) )
 			{
 			case 0:
 				if( y >= maxY - radius )
@@ -187,19 +193,24 @@ public class DrawableCircle
 				break;
 				
 			case 1:
-				y -= rnd.nextInt( 30 );
-				x -= rnd.nextInt( 30 );
+				y -= rnd.nextInt( 10 );
+				x -= rnd.nextInt( 10 );
 				
 				break;
 				
 			case 2:
-				y -= rnd.nextInt( 50 );
-				x += rnd.nextInt( 50 );
+				y -= rnd.nextInt( 10 );
+				x += rnd.nextInt( 10 );
 				
 				break;
 				
 			case 3:
 				speed -= rnd.nextFloat() * 2.0f;
+				
+				break;
+				
+			case 4:
+				speed += rnd.nextFloat() * 2.0f;
 				
 				break;
 			}

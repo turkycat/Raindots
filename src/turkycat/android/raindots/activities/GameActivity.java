@@ -54,8 +54,8 @@ public class GameActivity extends Activity
 			gameView.setMode( Mode.PAINT );
 			break;
 			
-		case R.id.wtf:
-			gameView.setMode( Mode.WTF );
+		case R.id.seizure:
+			gameView.setMode( Mode.SEIZURE );
 			break;
 			
 		case R.id.antigravity:

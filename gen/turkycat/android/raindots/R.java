@@ -70,21 +70,18 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020002;
     }
     public static final class id {
-        public static final int Main_Layout=0x7f090000;
-        public static final int action_settings=0x7f090009;
-        public static final int antigravity=0x7f090004;
-        public static final int density=0x7f090005;
-        public static final int evap=0x7f090006;
-        public static final int gameActivity=0x7f090001;
-        public static final int gameView=0x7f090002;
-        public static final int gravity=0x7f090003;
-        public static final int paint=0x7f090007;
-        public static final int wtf=0x7f090008;
+        public static final int action_settings=0x7f090008;
+        public static final int antigravity=0x7f090003;
+        public static final int density=0x7f090004;
+        public static final int evap=0x7f090005;
+        public static final int gameActivity=0x7f090000;
+        public static final int gameView=0x7f090001;
+        public static final int gravity=0x7f090002;
+        public static final int paint=0x7f090006;
+        public static final int seizure=0x7f090007;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int game_activity=0x7f030001;
-        public static final int sample_game_view=0x7f030002;
+        public static final int game_activity=0x7f030000;
     }
     public static final class menu {
         public static final int game_menu=0x7f080000;
@@ -98,7 +95,7 @@ containing a value of this type.
         public static final int evap_string=0x7f050005;
         public static final int gravity_string=0x7f050002;
         public static final int paint_string=0x7f050006;
-        public static final int wtf_string=0x7f050007;
+        public static final int seizure_string=0x7f050007;
     }
     public static final class style {
         /** 

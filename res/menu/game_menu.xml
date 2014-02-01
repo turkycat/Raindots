@@ -31,8 +31,8 @@
         android:orderInCategory="100"
         android:showAsAction="never" />
     <item
-        android:id="@+id/wtf"
-        android:title="@string/wtf_string"
+        android:id="@+id/seizure"
+        android:title="@string/seizure_string"
         android:orderInCategory="100"
         android:showAsAction="never" />
 

@@ -1,6 +1,8 @@
 package turkycat.android.raindots.views;
 
+import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import turkycat.android.raindots.drawables.DrawableCircle;
 import android.content.Context;
@@ -18,20 +20,19 @@ import android.view.WindowManager;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback
 {
 	//-----------------------------------------------------------------items used by this class
-	protected enum Status
-	{
-		RUNNING, PAUSED
-	};
+//	protected enum Status
+//	{
+//		RUNNING, PAUSED
+//	};
 
 	public enum Mode
 	{
-		GRAVITY, ANTIGRAVITY, DENSITY, EVAPORATE, PAINT, WTF
+		GRAVITY, ANTIGRAVITY, DENSITY, EVAPORATE, PAINT, SEIZURE
 	};
 	
 	public static final String TAG = "GameView";
 	
 	private GameThread gameThread;
-	private boolean started = false;
 	
 	
 	//------------------------------------------------------------------constructors
@@ -91,12 +92,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	{
 		Log.i( TAG, "Surface Created." );
 		gameThread = new GameThread( getHolder(), getContext() );
-		gameThread.setRunning( true );
-		if( !started )
-		{
-			gameThread.start();
-			started = true;
-		}
+		gameThread.start();
 	}
 
 	@Override
@@ -127,8 +123,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		private SurfaceHolder holder;
 		private Context context;
 		
-		//enums for control
-		private Status status;
 		private Mode mode;
 		private boolean running;
 		
@@ -137,20 +131,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		
 		Random rnd;
 		
-		private DrawableCircle[] circles;
-		private int start;
-		private int end;
+		private ConcurrentLinkedQueue<DrawableCircle> circles;
+		//private LinkedList<DrawableCircle> circles;
 		
 		public GameThread( SurfaceHolder holder, Context context )
 		{
 			this.holder = holder;
 			this.context = context;
 			this.rnd = new Random();
-			status = Status.RUNNING;
+			this.running = true;
 			mode = Mode.EVAPORATE;
-			circles = new DrawableCircle[1000];
-			start = 0;
-			end = 0;
+			
+			//choosing to use manual synchronization, rather than using a concurrent class
+			circles = new ConcurrentLinkedQueue<DrawableCircle>();
+			//circles = new LinkedList<DrawableCircle>();
 			
 			//get the maximum pixels of the screen
 			WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -170,12 +164,20 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		public boolean handleTouchEvent(MotionEvent event)
 		{
 			int size = event.getPointerCount();
-			for( int i = 0; i < size; i++ )
+			
+			Log.i( TAG, "reached touch event" );
+			
+			//size should never be more than 4 or 5 realistically. So the loop internal to this sync
+			//should be relatively fast. Lock time is still minimized
+			synchronized( circles )
 			{
-				float x = event.getX(i);
-				float y = event.getY(i);
-				circles[end] = new DrawableCircle(x, y, screenMaxX, screenMaxY);
-				end = (end + 1) % circles.length;
+				for( int i = 0; i < size; i++ )
+				{
+					float x = event.getX( i );
+					float y = event.getY( i );
+					circles.add( new DrawableCircle( x, y, screenMaxX, screenMaxY ) );
+					Log.i( TAG, "circle created at " + x + " " + y );
+				}
 			}
 			return true;
 		}
@@ -190,23 +192,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		@Override
 		public void run()
 		{
-			while( status == Status.RUNNING )
+			while( running )
 			{
 				synchronized( holder )
 				{
-					if( status == Status.RUNNING )
+					Canvas canvas = holder.lockCanvas( null );
+					if( canvas != null )
 					{
-						Canvas canvas = holder.lockCanvas( null );
-						if( canvas != null )
-						{
-							if( mode == Mode.WTF )
-								canvas.drawColor( Color.rgb( rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256) ) );
-							else if( mode != Mode.PAINT )
-								canvas.drawColor( Color.BLACK );
-							update();
-							drawCircles( canvas );
-							holder.unlockCanvasAndPost( canvas );
-						}
+						//draw a random color for seizure mode, clear the screen unless using paint mode.
+						if( mode == Mode.SEIZURE ) canvas.drawColor( Color.rgb( rnd.nextInt( 256 ), rnd.nextInt( 256 ), rnd.nextInt( 256 ) ) );
+						else if( mode != Mode.PAINT ) canvas.drawColor( Color.BLACK );
+						
+						//to save time in paint mode, don't update circles.
+						if( mode != Mode.PAINT ) update();
+						drawCircles( canvas );
+						holder.unlockCanvasAndPost( canvas );
 					}
 				}
 			}
@@ -215,7 +215,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		public void setRunning( boolean running )
 		{
-			this.status = running ? Status.RUNNING : Status.PAUSED;
+			this.running = running;
 		}
 		
 		
@@ -223,36 +223,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 
 		private void drawCircles(Canvas canvas)
 		{
-			int i;
-			//evaluate once, use many times;
-			int first_term = end < start ? circles.length : end;
-			Log.i( TAG, "start = " + start + " termination = " + first_term );
-			
-			for ( i = start; i < first_term; i++ )
+			synchronized( circles )
 			{
-				circles[i].draw( canvas );
-			}
-			
-			if( end < start )
-			{
-				Log.i( TAG, "entered 2nd loop." );
-				for( i = 0; i < end; i++ )
+				//Iterator<DrawableCircle> iter = circles.iterator();
+				for( DrawableCircle circle : circles )
 				{
-					circles[i].draw( canvas );
+					circle.draw( canvas );
 				}
 			}
 		}
 
 		private void update()
 		{
-			int i;
-			int stopping_point = end < start ? circles.length : end;
-			
-			for ( i = start; i < stopping_point && !circles[i].update( mode ); i++ ) start = ( start + 1 ) % circles.length;
-			for ( i++; i < stopping_point; i++ ) circles[i].update( mode );
-			
-			if( end < start )
-				for( i = 0; i < end; i++ ) circles[i].update( mode );
+			synchronized( circles )
+			{
+				Iterator<DrawableCircle> iter = circles.iterator();
+				while( iter.hasNext() )
+				{
+					if( !iter.next().update( mode ) ) iter.remove();
+				}
+			}
 		}
 	}
 
