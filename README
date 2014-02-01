@@ -1,1 +1,16 @@
-a basic application with no useful notes at this time (sorry!)
+2/1/2014
+-----------------------
+- corrected a multi-threading issue
+- changed from using DrawableCircles array to a synchronized list
+- renamed "WTF" mode to "Seizure Mode"
+- changed some seizure mode logic
+- deleted Main Activity. Application has pretty much always launched directly into the game activity, so no need to keep the old main activity around.
+- removed "drop" drawable resource (used in main activity)
+- removed "gravity" drawable resource (not used)
+
+
+initial commit
+-----------------------
+a basic application to be interpreted as a demonstration of the Drawables and Canvas in Android.
+- originally developed for Iowa State University Mobile Development Club
+- with no useful notes at this time, likely poor comments (sorry!)

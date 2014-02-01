@@ -156,9 +156,9 @@ public class DrawableCircle
 
 			break;
 			
-			//antigravity can move things up or down
+			//antigravity can move things up or down and also slightly modify their sizes
 		case ANTIGRAVITY:
-			if( isOutOfBounds() ) enabled = false;
+			if( isOutOfBounds() || radius < 0 ) enabled = false;
 			else
 			{
 				speed -= ( rnd.nextFloat() - 0.5f ) * 2;
@@ -169,6 +169,7 @@ public class DrawableCircle
 			
 			break;
 
+			//evaporate shrinks the circles until they dissapear.
 		case EVAPORATE:
 			
 			this.radius--;
@@ -176,6 +177,7 @@ public class DrawableCircle
 			
 			break;
 			
+			//seizure mode: for advanced users only!
 		case SEIZURE:
 			color = Color.rgb( rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256) );
 			this.radius = rnd.nextFloat() * 200.0f;
