@@ -20,6 +20,7 @@ public class GameActivity extends Activity
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.game_activity );
+		
 		gameView = (GameView) findViewById( R.id.gameView );
 		Log.i( TAG, "gameView is " + ( gameView == null ? "null." : gameView.toString() ) );
 		

@@ -1,11 +1,17 @@
 package turkycat.android.raindots.views;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import turkycat.android.raindots.drawables.DrawableCircle;
+import turkycat.android.raindots.R;
+import turkycat.android.raindots.drawables.DrawableBitmap;
+import turkycat.android.raindots.drawables.DrawableItem;
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -19,11 +25,6 @@ import android.view.WindowManager;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback
 {
-	//-----------------------------------------------------------------items used by this class
-//	protected enum Status
-//	{
-//		RUNNING, PAUSED
-//	};
 
 	public enum Mode
 	{
@@ -33,6 +34,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	public static final String TAG = "GameView";
 	
 	private GameThread gameThread;
+	private HashMap<String, Bitmap> bitmaps;
 	
 	
 	//------------------------------------------------------------------constructors
@@ -60,8 +62,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	
 	private void init( Context context )
 	{
+		bitmaps = new HashMap<String, Bitmap>();
 		SurfaceHolder holder = getHolder();
 		holder.addCallback( this );
+		Resources res = getResources();
+		bitmaps.put( "droid", BitmapFactory.decodeResource( res, R.drawable.droidbro ) );
 		//mGameThread = new GameThread( holder, context );
 	}
 	
@@ -131,8 +136,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		
 		Random rnd;
 		
-		private ConcurrentLinkedQueue<DrawableCircle> circles;
-		//private LinkedList<DrawableCircle> circles;
+		private ConcurrentLinkedQueue<DrawableItem> items;
+		//private LinkedList<DrawableCircle> items;
 		
 		public GameThread( SurfaceHolder holder, Context context )
 		{
@@ -142,9 +147,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			this.running = true;
 			mode = Mode.EVAPORATE;
 			
-			//choosing to use manual synchronization, rather than using a concurrent class
-			circles = new ConcurrentLinkedQueue<DrawableCircle>();
-			//circles = new LinkedList<DrawableCircle>();
+			//can use linked list with manual synchronization, rather than using a concurrent class
+			//but grabbing the locks before I do things with them doesn't hurt much if at all.
+			items = new ConcurrentLinkedQueue<DrawableItem>();
+			//items = new LinkedList<DrawableCircle>();
 			
 			//get the maximum pixels of the screen
 			WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -154,6 +160,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 			setScreenDimensions( p.x, p.y );
 		}
 		
+		/**
+		 * sets the screen dimensions for the view
+		 */
 		public void setScreenDimensions( int x, int y )
 		{
 			this.screenMaxY = y;
@@ -161,21 +170,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		}
 		
 		
+		/**
+		 * handles the touch events by creating new items to draw
+		 */
 		public boolean handleTouchEvent(MotionEvent event)
 		{
 			int size = event.getPointerCount();
 			
-			Log.i( TAG, "reached touch event" );
+			//Log.i( TAG, "reached touch event" );
 			
 			//size should never be more than 4 or 5 realistically. So the loop internal to this sync
 			//should be relatively fast. Lock time is still minimized
-			synchronized( circles )
+			synchronized( items )
 			{
 				for( int i = 0; i < size; i++ )
 				{
 					float x = event.getX( i );
 					float y = event.getY( i );
-					circles.add( new DrawableCircle( x, y, screenMaxX, screenMaxY ) );
+					//items.add( new DrawableCircle( x, y, screenMaxX, screenMaxY ) );
+					items.add( new DrawableBitmap( bitmaps.get( "droid" ), x, y, 100, screenMaxX, screenMaxY ) );
 					Log.i( TAG, "circle created at " + x + " " + y );
 				}
 			}
@@ -203,9 +216,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 						if( mode == Mode.SEIZURE ) canvas.drawColor( Color.rgb( rnd.nextInt( 256 ), rnd.nextInt( 256 ), rnd.nextInt( 256 ) ) );
 						else if( mode != Mode.PAINT ) canvas.drawColor( Color.BLACK );
 						
-						//to save time in paint mode, don't update circles.
+						//to save time in paint mode, don't update items.
 						if( mode != Mode.PAINT ) update();
-						drawCircles( canvas );
+						drawItems( canvas );
 						holder.unlockCanvasAndPost( canvas );
 					}
 				}
@@ -221,23 +234,23 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		
 		
 
-		private void drawCircles(Canvas canvas)
+		private void drawItems(Canvas canvas)
 		{
-			synchronized( circles )
+			synchronized( items )
 			{
-				//Iterator<DrawableCircle> iter = circles.iterator();
-				for( DrawableCircle circle : circles )
+				//Iterator<DrawableCircle> iter = items.iterator();
+				for( DrawableItem item : items )
 				{
-					circle.draw( canvas );
+					item.draw( canvas );
 				}
 			}
 		}
 
 		private void update()
 		{
-			synchronized( circles )
+			synchronized( items )
 			{
-				Iterator<DrawableCircle> iter = circles.iterator();
+				Iterator<DrawableItem> iter = items.iterator();
 				while( iter.hasNext() )
 				{
 					if( !iter.next().update( mode ) ) iter.remove();
