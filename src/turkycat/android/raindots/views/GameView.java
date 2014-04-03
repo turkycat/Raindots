@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import turkycat.android.raindots.R;
+import turkycat.android.raindots.application.Raindots;
 import turkycat.android.raindots.drawables.DrawableBitmap;
 import turkycat.android.raindots.drawables.DrawableItem;
 import android.content.Context;
@@ -25,7 +26,6 @@ import android.view.WindowManager;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback
 {
-
 	public enum Mode
 	{
 		GRAVITY, ANTIGRAVITY, DENSITY, EVAPORATE, PAINT, SEIZURE
@@ -33,6 +33,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	
 	public static final String TAG = "GameView";
 	
+	private Raindots application;
 	private GameThread gameThread;
 	private HashMap<String, Bitmap> bitmaps;
 	
@@ -62,7 +63,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	
 	private void init( Context context )
 	{
-		bitmaps = new HashMap<String, Bitmap>();
+		this.bitmaps = new HashMap<String, Bitmap>();
 		SurfaceHolder holder = getHolder();
 		holder.addCallback( this );
 		Resources res = getResources();

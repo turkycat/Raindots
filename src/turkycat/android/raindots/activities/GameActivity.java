@@ -1,6 +1,7 @@
 package turkycat.android.raindots.activities;
 
 import turkycat.android.raindots.R;
+import turkycat.android.raindots.application.Raindots;
 import turkycat.android.raindots.views.GameView;
 import turkycat.android.raindots.views.GameView.Mode;
 import android.app.Activity;
@@ -12,7 +13,8 @@ import android.widget.Toast;
 
 public class GameActivity extends Activity
 {
-	GameView gameView;
+	private Raindots application;
+	private GameView gameView;
 	public static final String TAG = "GameActivity";
 	
 	@Override
@@ -21,7 +23,9 @@ public class GameActivity extends Activity
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.game_activity );
 		
+		this.application = (Raindots) getApplication();
 		gameView = (GameView) findViewById( R.id.gameView );
+		
 		Log.i( TAG, "gameView is " + ( gameView == null ? "null." : gameView.toString() ) );
 		
 		Toast.makeText( gameView.getContext(), "press anywhere and enjoy", Toast.LENGTH_LONG).show();
