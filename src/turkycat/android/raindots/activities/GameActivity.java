@@ -13,9 +13,9 @@ import android.widget.Toast;
 
 public class GameActivity extends Activity
 {
-	private Raindots application;
-	private GameView gameView;
 	public static final String TAG = "GameActivity";
+	private GameView gameView;
+	private Raindots application;
 	
 	@Override
 	public void onCreate( Bundle savedInstanceState )
