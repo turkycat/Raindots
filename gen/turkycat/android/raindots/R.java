@@ -69,7 +69,7 @@ containing a value of this type.
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f090008;
+        public static final int action_settings=0x7f090009;
         public static final int antigravity=0x7f090003;
         public static final int density=0x7f090004;
         public static final int evap=0x7f090005;
@@ -78,6 +78,7 @@ containing a value of this type.
         public static final int gravity=0x7f090002;
         public static final int paint=0x7f090006;
         public static final int seizure=0x7f090007;
+        public static final int toggleDrawable=0x7f090008;
     }
     public static final class layout {
         public static final int game_activity=0x7f030000;
@@ -91,6 +92,7 @@ containing a value of this type.
         public static final int antigravity_string=0x7f050003;
         public static final int app_name=0x7f050000;
         public static final int density_string=0x7f050004;
+        public static final int drawable_mode=0x7f050008;
         public static final int evap_string=0x7f050005;
         public static final int gravity_string=0x7f050002;
         public static final int paint_string=0x7f050006;

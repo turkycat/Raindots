@@ -66,6 +66,10 @@ public class GameActivity extends Activity
 		case R.id.antigravity:
 			gameView.setMode( Mode.ANTIGRAVITY );
 			break;
+			
+		case R.id.toggleDrawable:
+			gameView.toggleDrawable();
+			break;
 		}
 		return true;
 	}

@@ -9,5 +9,6 @@
     <string name="evap_string">Evaporate</string>
     <string name="paint_string">Paint</string>
     <string name="seizure_string">Seizure Mode</string>
+    <string name="drawable_mode">Toggle Drawable</string>
 
 </resources>

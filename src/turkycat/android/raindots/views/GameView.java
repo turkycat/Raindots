@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import turkycat.android.raindots.R;
 import turkycat.android.raindots.application.Raindots;
 import turkycat.android.raindots.drawables.DrawableBitmap;
+import turkycat.android.raindots.drawables.DrawableCircle;
 import turkycat.android.raindots.drawables.DrawableItem;
 import android.content.Context;
 import android.content.res.Resources;
@@ -64,10 +65,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	private void init( Context context )
 	{
 		this.bitmaps = new HashMap<String, Bitmap>();
+		
+		//register this as a callback for the surfaceholder
 		SurfaceHolder holder = getHolder();
 		holder.addCallback( this );
+		
+		//add bitmap resources to dictionary
 		Resources res = getResources();
-		bitmaps.put( "droid", BitmapFactory.decodeResource( res, R.drawable.droidbro ) );
+		Bitmap bitmap = BitmapFactory.decodeResource( res, R.drawable.droidbro );
+		bitmap = Bitmap.createScaledBitmap( bitmap, bitmap.getWidth() / 2, bitmap.getHeight() / 2, false );
+		bitmaps.put( "droid", bitmap );
+		
 		//mGameThread = new GameThread( holder, context );
 	}
 	
@@ -117,10 +125,21 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 	}
 	
 	
-	
+	/**
+	 * sets the mode for the drawing thread
+	 */
 	public void setMode( Mode mode )
 	{
 		gameThread.setMode( mode );
+	}
+	
+	
+	/**
+	 * toggles the drawable type on the game thread
+	 */
+	public void toggleDrawable()
+	{
+		gameThread.toggleDrawable();
 	}
 	
 	
@@ -131,6 +150,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 		
 		private Mode mode;
 		private boolean running;
+		private boolean drawBitmaps = false;
 		
 		public int screenMaxY;
 		public int screenMaxX;
@@ -188,18 +208,39 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback
 				{
 					float x = event.getX( i );
 					float y = event.getY( i );
-					//items.add( new DrawableCircle( x, y, screenMaxX, screenMaxY ) );
-					items.add( new DrawableBitmap( bitmaps.get( "droid" ), x, y, 100, screenMaxX, screenMaxY ) );
-					Log.i( TAG, "circle created at " + x + " " + y );
+					
+					if( drawBitmaps )
+					{
+						items.add( new DrawableBitmap( bitmaps.get( "droid" ), x, y, rnd.nextInt(100) + 1, screenMaxX, screenMaxY ) );
+					}
+					else
+					{
+						items.add( new DrawableCircle( x, y, screenMaxX, screenMaxY ) );
+					}
+					
+					//Log.i( TAG, "item created at " + x + " " + y );
 				}
 			}
 			return true;
 		}
 
 		
+		/**
+		 * sets the mode
+		 */
 		public void setMode( Mode mode )
 		{
 			this.mode = mode;
+		}
+
+		
+		
+		/**
+		 * toggles the drawable type
+		 */
+		public void toggleDrawable()
+		{
+			drawBitmaps = !drawBitmaps;
 		}
 		
 		

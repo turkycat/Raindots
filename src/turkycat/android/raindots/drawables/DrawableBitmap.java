@@ -11,6 +11,8 @@ public class DrawableBitmap extends DrawableItem
 	private static final String TAG = "DrawableItem";
 	
 	private Bitmap bitmap;
+	private int height;
+	private int width;
 	
 	public DrawableBitmap( Bitmap bitmap, float x, float y )
 	{
@@ -24,12 +26,15 @@ public class DrawableBitmap extends DrawableItem
 	
 	public DrawableBitmap( Bitmap bitmap, float x, float y, float size, int maxX, int maxY )
 	{
+		if( bitmap == null ) throw new IllegalArgumentException();
 		init( x, y, maxX, maxY, false );
 		
 		//clamp size [0,1]
 		this.size = Math.max( 0f, Math.min( 100f, size ) );
 		
 		this.bitmap = bitmap;
+		height = bitmap.getHeight();
+		width = bitmap.getWidth();
 	}
 
 	@Override
@@ -43,8 +48,12 @@ public class DrawableBitmap extends DrawableItem
 	{
 		Log.i( TAG, "bitmap being drawn? " + (bitmap == null ? "NO" : "YES" ) );
 		Matrix matrix = new Matrix();
-		matrix.postScale( size / 100f, size / 100f );
-		matrix.postTranslate( x, y );
+		
+		float scale = size / 100f;
+		int xtranslate = ( (int) ( width * scale ) ) / 2;
+		int ytranslate = ( (int) ( height * scale ) ) / 2;
+		matrix.postScale( scale, scale );
+		matrix.postTranslate( x - xtranslate, y - ytranslate );
 		canvas.drawBitmap( bitmap, matrix, null );
 	}
 }

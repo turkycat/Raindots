@@ -30,10 +30,17 @@
         android:title="@string/paint_string"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    
     <item
         android:id="@+id/seizure"
         android:title="@string/seizure_string"
         android:orderInCategory="100"
+        android:showAsAction="never" />
+    
+    <item
+        android:id="@+id/toggleDrawable"
+        android:title="@string/drawable_mode"
+        android:orderInCategory="101"
         android:showAsAction="never" />
 
 </menu>
